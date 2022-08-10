@@ -69,29 +69,35 @@ router.post('/article/video', auth, upload.single('video'), async (req, res) => 
   try {
     const { path } = req.file; // file becomes available in req at this point
     const fName = req.file.originalname.split('.')[0];
-    const uploadResponse = await cloudinary.uploader.upload_large(
-      path,
-      {
-        resource_type: 'video',
-        public_id: `conduit/${fName}`,
-        chunk_size: 6000000,
-        eager: [
+    function uploadToCloudinary() {
+      return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_large(path, 
           {
-            width: 300,
-            height: 300,
-            crop: 'pad',
-            audio_codec: 'none',
-          },
-          {
-            width: 160,
-            height: 100,
-            crop: 'crop',
-            gravity: 'south',
-            audio_codec: 'none',
-          },
-        ],
-      },
-    );
+          resource_type: 'video',
+          public_id: `conduit/${fName}`,
+          chunk_size: 6000000,
+          eager: [
+            {
+              width: 300,
+              height: 300,
+              crop: 'pad',
+              audio_codec: 'none',
+            },
+            {
+              width: 160,
+              height: 100,
+              crop: 'crop',
+              gravity: 'south',
+              audio_codec: 'none',
+            },
+          ],
+        },(err, url) => {
+          if (err) return reject(err);
+          return resolve(url);
+        })
+      });
+    }
+    const response = await uploadToCloudinary();
     const articleData = {
       title: fName,
       description: fName,
@@ -108,7 +114,7 @@ router.post('/article/video', auth, upload.single('video'), async (req, res) => 
       article.slug = article.title;
     }
     await article.save();
-    res.send(uploadResponse);
+    res.send(response);
   } catch (e) {
     res.status(400).send(e);
   }
