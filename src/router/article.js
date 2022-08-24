@@ -20,7 +20,7 @@ router.post('/article', auth, async (req, res) => {
     const slug=article.title.replace(/<[^>]*>|[^a-zA-Z0-9 ]/g,'-').replace(/ /g, '-');
     const isExist = await Article.findOne({ slug });
     if(isExist){
-      res.status(400).send(e);
+      return res.status(400).send('Title Exist!');
     }
     article.slug = article.title.replace(/<[^>]*>|[^a-zA-Z0-9 ]/g,'-').replace(/ /g, '-');
     await article.save();
