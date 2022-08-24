@@ -16,7 +16,13 @@ router.post('/article', auth, async (req, res) => {
     author: req.user._id,
   });
   try {
-    article.slug = article.title.replace(/\s*$/, '').replace(/ /g, '-');
+    
+    const slug=article.title.replace(/<[^>]*>|[^a-zA-Z0-9 ]/g,'-').replace(/ /g, '-');
+    const isExist = await Article.findOne({ slug });
+    if(isExist){
+      res.status(400).send(e);
+    }
+    article.slug = article.title.replace(/<[^>]*>|[^a-zA-Z0-9 ]/g,'-').replace(/ /g, '-');
     await article.save();
     res.status(201).send(article);
   } catch (e) {

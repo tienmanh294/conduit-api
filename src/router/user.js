@@ -14,9 +14,12 @@ const User = require('../models/user');
 const auth = require('../middleware/auth');
 
 const router = new express.Router();
-router.get('/users/refresh', async (req, res) => {
+router.get('/users/refresh',async (req, res) => {
   try {
-    const refreshToken = req.cookies.jwt;
+    const refreshToken = req.cookies.jwtRefresh;
+    if(refreshToken===undefined){
+      return res.status(401).send('Guest');
+    }
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     const user = await User.findOne({
       _id: decoded._id,
@@ -67,7 +70,7 @@ router.post('/users/login', async (req, res) => {
 
     await user.save();
 
-    res.cookie('jwt', refreshToken, {
+    res.cookie('jwtRefresh', refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'None',
@@ -84,7 +87,7 @@ router.post('/users/logout', auth, async (req, res) => {
       ({ refreshToken }) => refreshToken.token !== req.refreshToken);
     req.user.tokens = req.user.tokens.filter(({ token }) => token.token !== req.token);
     await req.user.save();
-    res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
+    res.clearCookie('jwtRefresh', { httpOnly: true, sameSite: 'None', secure: true });
     res.send();
   } catch (e) {
     res.status(500).send();
@@ -96,7 +99,7 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     req.user.tokens = [];
     req.user.refreshTokens = [];
     await req.user.save();
-    res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
+    res.clearCookie('jwtRefresh', { httpOnly: true, sameSite: 'None', secure: true });
     res.send();
   } catch (e) {
     res.status(500).send();
@@ -174,7 +177,8 @@ router.post(
     });
     req.user.url = uploadResponse.public_id;
     await req.user.save();
-    res.send();
+    
+    res.send(req.user);
   },
   (error, req, res) => {
     res.status(400).send({ error: error.message });

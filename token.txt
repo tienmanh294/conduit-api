@@ -1,0 +1,29 @@
+{
+  "_id": {
+    "$oid": "63062923123e5e2cb0baaa40"
+  },
+  "body": "Hạn hán đã giúp cho các nhà khoa học phát hiện ra dấu vết khủng long từ 113 triệu năm trước!",
+  "description": "Hạn hán đã giúp cho các nhà khoa học phát hiện ra dấu vết khủng long từ 113 triệu năm trước!",
+  "title": "Hạn hán đã giúp cho các nhà khoa học phát hiện ra dấu vết khủng long từ 113 triệu năm trước!",
+  "video": "",
+  "slug": "H-n-h-n----gi-p-cho-c-c-nh--khoa-h-c-ph-t-hi-n-ra-d-u-v-t-kh-ng-long-t--113-tri-u-n-m-tr--c-",
+  "tags": [
+    "science"
+  ],
+  "favorited": [],
+  "favorites": 0,
+  "author": {
+    "$oid": "630352b24a0c204eb93ab4af"
+  },
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1661348131503"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1661348131503"
+    }
+  },
+  "__v": 0
+}
